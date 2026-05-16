@@ -6,10 +6,10 @@ const router= express.Router()
 
 router.get("/dashboard",async(req,res)=>{
     const totalOrder= await Order.countDocuments({
-        user:req.user._id
+        user:req.user.id
     })
     const pendingOrder= await Order.countDocuments({
-        user:req.user_id,
+        user:req.userid,
         status:"Pending"
     })
     const deliveredOrder=await Order.countDocuments({
@@ -17,7 +17,7 @@ router.get("/dashboard",async(req,res)=>{
         status:"Delivered"
     })
     const recentOrder= await Order.find({
-        user:req.user_id
+        user:req.userid
     }).sort({createdAt:-1}).limit(5)
     res.status(200).json({
         "totalOrder":totalOrder,
