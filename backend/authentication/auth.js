@@ -1,26 +1,26 @@
 const express=require("express")
 const jwt=require("jsonwebtoken")
-const bycrpt=require("bycrpt")
+const bcrypt = require("bcrypt");
 const User=require("../schema/user")
 const router=express.Router()
-router.post("/signup",async(req,res)=>{
-    const{name,email,password,role}=req.body
+const{signupmiddleware,loginmiddleware}=require("../middleware/authmiddleware")
+router.post("/signup",signupmiddleware,async(req,res)=>{
+    const{name,email,password}=req.body
     const finduser= await User.findOne({
         email:email
     }) 
     if (finduser){
         return res.status(409).send("User already exist")
     }
-    const hashpassword= await bycrpt.hash(password,10)
+    const hashpassword= await bcrypt.hash(password,10)
 
     const user= await User.create({
         name:name,
         email:email,
-        password:hashpassword,
-        role:role
+        password:hashpassword
 
     })
-    const token= await jwt.sign(
+    const token=  jwt.sign(
         { id:user._id,email:user.email},
      process.env.JWT,
      {expiresIn:"1h"}
@@ -33,17 +33,17 @@ router.post("/signup",async(req,res)=>{
         token
     })
 })
-router.post("login",async(req,res)=>{
+router.post("/login",loginmiddleware,async(req,res)=>{
     const {email,password,role}=req.body
     const finduser= await User.findOne({email})
     if (!finduser){
         return res.status(404).send("User not found")
     }
-    const compare= await bycrpt.compare(password,finduser.password)
+    const compare= await bcrypt.compare(password,finduser.password)
     if (!compare){
         return res.status(401).send("Incorrect password")
     }
-    const token= await jwt.sign(
+    const token=  jwt.sign(
         {id:finduser._id,email:finduser.email},
         process.env.JWT,
         {expiresIn:"1h"}
