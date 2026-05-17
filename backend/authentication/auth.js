@@ -21,7 +21,7 @@ router.post("/signup",signupmiddleware,async(req,res)=>{
 
     })
     const token=  jwt.sign(
-        { id:user._id,email:user.email},
+        { id:user._id,email:user.email, role:user.roles},
      process.env.JWT,
      {expiresIn:"1h"}
 )
@@ -29,12 +29,12 @@ router.post("/signup",signupmiddleware,async(req,res)=>{
         id:user._id,
         name:user.name,
         email:user.email,
-        role:user.role,
+        role:user.roles,
         token
     })
 })
 router.post("/login",loginmiddleware,async(req,res)=>{
-    const {email,password,role}=req.body
+    const {email,password}=req.body
     const finduser= await User.findOne({email})
     if (!finduser){
         return res.status(404).send("User not found")
@@ -44,7 +44,7 @@ router.post("/login",loginmiddleware,async(req,res)=>{
         return res.status(401).send("Incorrect password")
     }
     const token=  jwt.sign(
-        {id:finduser._id,email:finduser.email},
+        {id:finduser._id,email:finduser.email, role:finduser.roles},
         process.env.JWT,
         {expiresIn:"1h"}
     )
@@ -52,6 +52,7 @@ router.post("/login",loginmiddleware,async(req,res)=>{
         id:finduser._id,
         email:finduser.email,
         name:finduser.name,
+        role:finduser.roles,
         token
     })
 })

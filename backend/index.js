@@ -17,7 +17,7 @@ app.use("/admin",adminRoute)
 mongoose.connect(process.env.Mongo_url)
 .then(()=>{console.log("MongoDB Connected")})
 .catch((err)=>console.log(err))
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT,()=>{
     console.log("Server is running")
