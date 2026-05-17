@@ -25,11 +25,17 @@ router.get("/dashboard",authMiddleware,rbac,async(req,res)=>{
     })
 })
 router.get("/search",authMiddleware,rbac,async(req,res)=>{
-    const{orderNumber}=req.query
+    const{orderNumber,filter}=req.query
+    if (filter){
+        const filterOrder=await Order.find({
+            status:filter
+        }).populate("user").populate("fuel")
+        return res.status(200).json({filterOrder})
+    }
     const findOrder= await Order.findOne({
         orderNumber
     }).populate("user").populate("fuel")
-    res.status(200).json({
+    return res.status(200).json({
         findOrder
     })
 })
