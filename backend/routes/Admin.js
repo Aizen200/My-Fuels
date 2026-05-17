@@ -12,11 +12,14 @@ router.get("/dashboard",async(req,res)=>{
     const deliveredOrder=await Order.countDocuments({
         status:"Delivered"
     })
+    const recentOrder=await Order.find().
+    populate("User").populate("Fuel").sort({createdAt:-1}).limit(5)
     res.status(200).json({
         totalOrder,
         pendingOrder,
         outfordelivery,
-        deliveredOrder
+        deliveredOrder,
+        recentOrder
     })
 })
 module.exports= router
