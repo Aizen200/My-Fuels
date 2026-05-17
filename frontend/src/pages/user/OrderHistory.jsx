@@ -41,8 +41,7 @@ const OrderHistory = () => {
     if (trackingOrder) {
       interval = setInterval(() => {
         setSimLocation(prev => ({
-          lat: prev.lat + 0.0002,
-          lng: prev.lng + 0.0002,
+          ...prev,
           progress: prev.progress < 95 ? prev.progress + 2 : prev.progress
         }));
       }, 2000);
