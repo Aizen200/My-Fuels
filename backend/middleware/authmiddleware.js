@@ -1,22 +1,15 @@
-const signupmiddleware=(req,res,next)=>{
-    const{name,email,password}=req.body
-    if(!name ||! email || !password){
-        return res.status(400).send("All the fields required")
-    }
-    if (!email.includes("@")){
-        return res.status(400).send("Invalid email")
-    }
-    next()
-}
-const loginmiddleware=(req,res,next)=>{
-    const{email,password}=req.body 
-    if (!email || !password){
-        return res.status(400).send("All the fields required")
+const jwt=require("jsonwebtoken")
 
+const authMiddleware=(req,res,next)=>{
+    const authorization=req.headers.authorization
+    if (!authorization){
+        return res.status(401).json({
+            "err":"No token provided"
+        })
     }
-    if (!email.includes("@")){
-        return res.status(400).send("Invalid email")
-    }
+    const token=authorization.split(" ")[1]
+    const decode=jwt.verify(token,process.env.JWT)
+    req.user=decode
     next()
 }
-module.exports={loginmiddleware,signupmiddleware}
+module.exports=authMiddleware

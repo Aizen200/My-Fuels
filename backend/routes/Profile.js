@@ -1,7 +1,8 @@
 const express=require("express")
 const User=require("../schema/user")
 const router= express.Router()
-router.get("/:name",async(req,res)=>{
+const authMiddleware=require("../middleware/authmiddleware")
+router.get("/:name",authMiddleware,async(req,res)=>{
     const{name}=req.params
     if (!name){
         return res.status(400).json({"err":"user does not exist"})
