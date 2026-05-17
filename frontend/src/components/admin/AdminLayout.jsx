@@ -19,16 +19,13 @@ const AdminLayout = () => {
       try {
         const res = await API.get('/admin/vieworders');
         const orders = res.data.allorders || [];
-        const pending = orders.filter(o => o.status === 'Pending');
-        setPendingCount(pending.length);
+        setPendingCount(orders.length);
         if (orders.length > 0) {
           const dynamicNotifs = orders.slice(0, 5).map(o => ({
             id: o._id,
-            text: o.status === 'Pending' 
-              ? `New order #${o.orderNumber || o._id.slice(-6)} placed by ${o.user?.name || 'Customer'}`
-              : `Order #${o.orderNumber || o._id.slice(-6)} status is ${o.status}`,
-            time: new Date(o.createdAt).toLocaleDateString('en-IN'),
-            icon: <HiOutlineInformationCircle className={o.status === 'Pending' ? "text-yellow-500" : "text-blue-500"} size={18} />
+            text: `New order #${o.orderNumber || o._id.slice(-6)} has been placed by ${o.user?.name || 'Customer'}`,
+            time: `Status: ${o.status} • ${new Date(o.createdAt).toLocaleDateString('en-IN')}`,
+            icon: <HiOutlineInformationCircle className="text-blue-500" size={18} />
           }));
           setNotifications(dynamicNotifs);
         }
@@ -57,7 +54,7 @@ const AdminLayout = () => {
                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 z-50 animate-fade-in">
                   <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-slate-900">Notifications</h3>
-                    <span className="text-xs bg-admin-50 text-admin-600 font-medium px-2 py-0.5 rounded-full">{pendingCount} New</span>
+                    <span className="text-xs bg-admin-50 text-admin-600 font-medium px-2 py-0.5 rounded-full">{pendingCount} Orders</span>
                   </div>
                   <div className="divide-y divide-slate-50 max-h-80 overflow-y-auto">
                     {notifications.map(n => (
