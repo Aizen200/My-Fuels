@@ -33,6 +33,13 @@ router.get("/search",authMiddleware,rbac,async(req,res)=>{
         findOrder
     })
 })
+router.get("/vieworders",authMiddleware,rbac,async(req,res)=>{
+    const allorders=await Order.find().populate("user").populate("fuel")
+    res.status(200).json({
+        allorders
+
+    })
+})
 router.patch("/orders/:id/status",authMiddleware,rbac,async(req,res)=>{
     const{status}=req.body
     const{id}=req.params
