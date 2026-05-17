@@ -54,7 +54,7 @@ router.get("/search",authMiddleware,rbac,async(req,res,next)=>{
 
 router.get("/vieworders",authMiddleware,rbac,async(req,res,next)=>{
     try {
-        const allorders=await Order.find().populate("user").populate("fuel")
+        const allorders=await Order.find().populate("user").populate("fuel").sort({createdAt:-1})
         res.status(200).json({
             allorders
         })

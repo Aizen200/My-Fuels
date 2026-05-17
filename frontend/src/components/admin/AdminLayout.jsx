@@ -9,6 +9,7 @@ const AdminLayout = () => {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
   const [notifications, setNotifications] = useState([
     { id: 1, text: 'System running smoothly', time: 'Just now', icon: <HiOutlineCheckCircle className="text-green-500" size={18} /> }
   ]);
@@ -18,12 +19,16 @@ const AdminLayout = () => {
       try {
         const res = await API.get('/admin/vieworders');
         const orders = res.data.allorders || [];
+        const pending = orders.filter(o => o.status === 'Pending');
+        setPendingCount(pending.length);
         if (orders.length > 0) {
           const dynamicNotifs = orders.slice(0, 5).map(o => ({
             id: o._id,
-            text: `Order #${o.orderNumber || o._id.slice(-6)} status is ${o.status}`,
+            text: o.status === 'Pending' 
+              ? `New order #${o.orderNumber || o._id.slice(-6)} placed by ${o.user?.name || 'Customer'}`
+              : `Order #${o.orderNumber || o._id.slice(-6)} status is ${o.status}`,
             time: new Date(o.createdAt).toLocaleDateString('en-IN'),
-            icon: <HiOutlineInformationCircle className="text-blue-500" size={18} />
+            icon: <HiOutlineInformationCircle className={o.status === 'Pending' ? "text-yellow-500" : "text-blue-500"} size={18} />
           }));
           setNotifications(dynamicNotifs);
         }
@@ -46,13 +51,13 @@ const AdminLayout = () => {
             <div className="relative">
               <button onClick={() => setShowNotifications(!showNotifications)} className="relative p-2 text-slate-500 hover:text-slate-700 transition-colors focus:outline-none">
                 <HiOutlineBell size={20} />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-admin-500 rounded-full"></span>
+                {pendingCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-admin-500 rounded-full"></span>}
               </button>
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 z-50 animate-fade-in">
                   <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-slate-900">Notifications</h3>
-                    <span className="text-xs bg-admin-50 text-admin-600 font-medium px-2 py-0.5 rounded-full">3 New</span>
+                    <span className="text-xs bg-admin-50 text-admin-600 font-medium px-2 py-0.5 rounded-full">{pendingCount} New</span>
                   </div>
                   <div className="divide-y divide-slate-50 max-h-80 overflow-y-auto">
                     {notifications.map(n => (
