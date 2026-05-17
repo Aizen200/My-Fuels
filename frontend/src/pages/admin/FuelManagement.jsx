@@ -81,35 +81,37 @@ const FuelManagement = () => {
         </button>
       </div>
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-slate-50">
-               <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Fuel Type</th>
-               <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Price Per Litre</th>
-               <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
-               <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Action</th>
-             </tr>
-           </thead>
-           <tbody className="divide-y divide-slate-100">
-             {fuels.map((fuel) => (
-               <tr key={fuel._id} className="hover:bg-slate-50 transition-colors">
-                 <td className="px-6 py-4 text-sm font-medium text-slate-900">{fuel.fuelName}</td>
-                 <td className="px-6 py-4 text-sm text-slate-600">₹{fuel.pricePerLitre?.toFixed(2)}</td>
-                 <td className="px-6 py-4"><span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Active</span></td>
-                 <td className="px-6 py-4">
-                   <div className="flex items-center gap-3">
-                     <button onClick={() => openEdit(fuel)} className="text-blue-600 hover:text-blue-700"><HiOutlinePencil size={16} /></button>
-                     <button onClick={() => handleDelete(fuel._id)} className="text-red-600 hover:text-red-700"><HiOutlineTrash size={16} /></button>
-                   </div>
-                 </td>
-               </tr>
-             ))}
-           </tbody>
-         </table>
-         <div className="px-6 py-4 border-t border-slate-100">
-           <p className="text-sm text-slate-500">Showing 1 to {fuels.length} of {fuels.length} fuels</p>
-         </div>
-       </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-slate-50">
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Fuel Type</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Price Per Litre</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {fuels.map((fuel) => (
+                <tr key={fuel._id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 text-sm font-medium text-slate-900">{fuel.fuelName}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">₹{fuel.pricePerLitre?.toFixed(2)}</td>
+                  <td className="px-6 py-4"><span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Active</span></td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <button onClick={() => openEdit(fuel)} className="text-blue-600 hover:text-blue-700"><HiOutlinePencil size={16} /></button>
+                      <button onClick={() => handleDelete(fuel._id)} className="text-red-600 hover:text-red-700"><HiOutlineTrash size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="px-6 py-4 border-t border-slate-100">
+          <p className="text-sm text-slate-500">Showing 1 to {fuels.length} of {fuels.length} fuels</p>
+        </div>
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
