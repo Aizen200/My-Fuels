@@ -4,49 +4,57 @@ const Fuel=require("../schema/fuel")
 const authMiddleware=require("../middleware/authmiddleware")
 const router= express.Router()
 
-router.get("/fuels", authMiddleware, async(req, res) => {
+router.get("/fuels", authMiddleware, async(req, res, next) => {
     try {
         const fuels = await Fuel.find();
         res.status(200).json({ fuels });
     } catch (error) {
-        res.status(500).json({ message: "Server Error" });
+        next(error);
     }
 })
 
-router.get("/dashboard",authMiddleware,async(req,res)=>{
-    const totalOrder= await Order.countDocuments({
-        user:req.user.id
-    })
-    const pendingOrder= await Order.countDocuments({
-        user:req.user.id,
-        status:"Pending"
-    })
-    const deliveredOrder=await Order.countDocuments({
-        user:req.user.id,
-        status:"Delivered"
-    })
-    const recentOrder= await Order.find({
-        user:req.user.id
-    }).sort({createdAt:-1}).limit(5)
-    res.status(200).json({
-        "totalOrder":totalOrder,
-        "pendingOrder":pendingOrder,
-        "deliveredOrder":deliveredOrder,
-        "recentOrder":recentOrder
-    })
-})
-router.get("/history",authMiddleware,async(req,res)=>{
-    const OrderHistory=await Order.find({
-        user:req.user.id
-    })
-    res.status(200).json({
-        "OrderHistory":OrderHistory
-    })
-})
-router.post("/orders", authMiddleware,async (req, res) => {
-
+router.get("/dashboard",authMiddleware,async(req,res,next)=>{
     try {
+        const totalOrder= await Order.countDocuments({
+            user:req.user.id
+        })
+        const pendingOrder= await Order.countDocuments({
+            user:req.user.id,
+            status:"Pending"
+        })
+        const deliveredOrder=await Order.countDocuments({
+            user:req.user.id,
+            status:"Delivered"
+        })
+        const recentOrder= await Order.find({
+            user:req.user.id
+        }).sort({createdAt:-1}).limit(5)
+        res.status(200).json({
+            "totalOrder":totalOrder,
+            "pendingOrder":pendingOrder,
+            "deliveredOrder":deliveredOrder,
+            "recentOrder":recentOrder
+        })
+    } catch (error) {
+        next(error);
+    }
+})
 
+router.get("/history",authMiddleware,async(req,res,next)=>{
+    try {
+        const OrderHistory=await Order.find({
+            user:req.user.id
+        })
+        res.status(200).json({
+            "OrderHistory":OrderHistory
+        })
+    } catch (error) {
+        next(error);
+    }
+})
+
+router.post("/orders", authMiddleware,async (req, res, next) => {
+    try {
         const {
             preferredDeliveryTime,
             fuel,
@@ -68,23 +76,14 @@ router.post("/orders", authMiddleware,async (req, res) => {
         const orderNumber =
             `MF-${Date.now()}`;
         const order = await Order.create({
-
             user: req.user.id,
-
             fuel,
-
             quantity,
-
             totalPrice,
-
             preferredDeliveryTime,
-
             notes,
-
             address,
-
             orderNumber
-
         });
 
         return res.status(201).json({
@@ -93,12 +92,8 @@ router.post("/orders", authMiddleware,async (req, res) => {
         });
 
     } catch (error) {
-
-        return res.status(500).json({
-            message: "Server Error"
-        });
-
+        next(error);
     }
-
 });
+
 module.exports=router

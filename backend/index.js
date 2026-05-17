@@ -21,6 +21,14 @@ mongoose.connect(process.env.Mongo_url)
 .then(()=>{console.log("MongoDB Connected")})
 .catch((err)=>console.log(err))
 const PORT = process.env.PORT || 3000;
+app.use((err, req, res, next) => {
+    console.error("Global error handler:", err);
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        error: process.env.NODE_ENV === "development" ? err : {}
+    });
+});
 
 app.listen(PORT,()=>{
     console.log("Server is running")
