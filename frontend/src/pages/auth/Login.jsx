@@ -23,7 +23,9 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      toast.error(err.response?.data || 'Login failed');
+      const errorData = err.response?.data;
+      const errorMessage = errorData?.message || errorData?.err || (typeof errorData === 'string' ? errorData : 'Login failed');
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
