@@ -8,7 +8,10 @@ const authRoutes=require("./authentication/auth")
 const profileRoute=require("./routes/Profile")
 const userRoute=require("./routes/Userroute")
 const adminRoute=require("./routes/Adminroute")
-app.use(cors())
+app.use(cors({
+    origin: "https://my-fuels.vercel.app",
+    credentials: true
+}))
 app.use(express.json())
 app.use("/auth",authRoutes)
 app.use("/profile",profileRoute)
