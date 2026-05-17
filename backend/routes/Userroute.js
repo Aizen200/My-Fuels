@@ -1,22 +1,32 @@
 const express=require("express")
 const Order=require("../schema/order")
+const Fuel=require("../schema/fuel")
 const authMiddleware=require("../middleware/authmiddleware")
 const router= express.Router()
+
+router.get("/fuels", authMiddleware, async(req, res) => {
+    try {
+        const fuels = await Fuel.find();
+        res.status(200).json({ fuels });
+    } catch (error) {
+        res.status(500).json({ message: "Server Error" });
+    }
+})
 
 router.get("/dashboard",authMiddleware,async(req,res)=>{
     const totalOrder= await Order.countDocuments({
         user:req.user.id
     })
     const pendingOrder= await Order.countDocuments({
-        user:req.userid,
+        user:req.user.id,
         status:"Pending"
     })
     const deliveredOrder=await Order.countDocuments({
-        user:req.user._id,
+        user:req.user.id,
         status:"Delivered"
     })
     const recentOrder= await Order.find({
-        user:req.userid
+        user:req.user.id
     }).sort({createdAt:-1}).limit(5)
     res.status(200).json({
         "totalOrder":totalOrder,
