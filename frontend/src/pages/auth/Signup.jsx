@@ -76,7 +76,7 @@ const Signup = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-user-500 focus:border-user-500 outline-none transition-all text-sm"
-                  placeholder="John Doe"
+                  placeholder="Username"
                   required
                 />
               </div>
